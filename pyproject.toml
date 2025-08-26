@@ -1,0 +1,49 @@
+[project]
+name = "petfinder-dashboard"
+version = "0.0.1"
+description = "Donor intelligence dashboard powered by Petfinder"
+readme = "README.md"
+
+authors = [
+    { name = "raqmejtru", email = "raqmejtru@gmail.com" }
+]
+requires-python = ">=3.9"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "SQLAlchemy>=2.0",
+    "psycopg[binary]",
+    "alembic",
+    "requests",
+    "pydantic>=2",
+    "python-dotenv",
+    "dash",
+    "plotly",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "httpx",
+  "ruff",
+  "black",
+  "mypy",
+  "pre-commit",
+]
+
+[tool.ruff]
+line-length = 100
+
+[tool.black]
+line-length = 100
+
+[tool.mypy]
+strict = true
+python_version = "3.11"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["backend", "etl"]

@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.local/
+
+# Editors/OS
+.DS_Store
+.idea/
+.vscode/
+
+# Alembic
+alembic/versions/*.pyc
+
+# Dash
+frontend/__pycache__/
