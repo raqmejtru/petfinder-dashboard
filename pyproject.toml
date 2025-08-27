@@ -7,7 +7,7 @@ readme = "README.md"
 authors = [
     { name = "raqmejtru", email = "raqmejtru@gmail.com" }
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 dependencies = [
     "fastapi",
     "uvicorn[standard]",
@@ -33,13 +33,16 @@ dev = [
 
 [tool.ruff]
 line-length = 100
-
+target-version = "py311"
 [tool.black]
 line-length = 100
 
 [tool.mypy]
-strict = true
 python_version = "3.11"
+strict = true
+plugins = ["sqlalchemy.ext.mypy.plugin", "pydantic.mypy"]
+# FastAPI route decorators return Any; in strict mode this trips an error.
+disallow_any_decorated = false
 
 [build-system]
 requires = ["setuptools>=68", "wheel"]
