@@ -19,6 +19,7 @@ repos:
         - fastapi>=0.110
         - starlette>=0.37
         - httpx>=0.26
+        - pytest>=8
         args: ["--config-file", "pyproject.toml"]
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.17.0
