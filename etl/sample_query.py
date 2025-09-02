@@ -11,17 +11,9 @@ from sqlalchemy.sql.elements import TextClause
 from sqlalchemy.orm import Session
 from sqlalchemy.engine import Engine, Connection
 
+from backend.app.db import SessionLocal
+from backend.app.pf_client import PetfinderClient
 
-# Query: senior female cats near Austin, TX
-PARAMS: dict[str, Any] = {
-    "type": "cat",
-    "age": "senior",
-    "gender": "female",
-    "location": "Austin, TX",
-    "distance": 50,  # miles
-    "limit": 100,  # per page; Petfinder pagination continues in the client
-    "status": "adoptable",
-}
 
 # Portable DDL: works on SQLite (treated as TEXT) and Postgres (true timestamptz)
 DDL = """
@@ -161,7 +153,38 @@ def upsert_stmt_for(db: Session) -> TextClause:
 
 
 def main() -> None:
-    return
+    """Fetch animals from Petfinder using PARAMS and upsert into tmp_animals_sample."""
+
+    # Query: senior female cats near Austin, TX
+    PARAMS: dict[str, Any] = {
+        "type": "cat",
+        "age": "senior",
+        "gender": "female",
+        "location": "Austin, TX",
+        "distance": 100,  # miles
+        "limit": 100,  # per page; Petfinder pagination continues in the client
+        "status": "adoptable",
+    }
+
+    start = dt.datetime.now(dt.timezone.utc)
+
+    client = PetfinderClient()
+    rows: list[dict[str, Any]] = [_row(a) for a in client.iter_animals(**PARAMS)]
+    print(f"[etl] fetched={len(rows)} params={PARAMS}")
+
+    if not rows:
+        print("[etl] nothing to load; exiting")
+        return
+
+    with SessionLocal() as db:
+        db.execute(text(DDL))
+        stmt = upsert_stmt_for(db)
+        # executemany for speed
+        db.execute(stmt, rows)
+        db.commit()
+
+    dur = (dt.datetime.now(dt.timezone.utc) - start).total_seconds()
+    print(f"[etl] loaded={len(rows)} table=tmp_animals_sample in {dur:.2f}s")
 
 
 if __name__ == "__main__":

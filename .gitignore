@@ -17,3 +17,8 @@ alembic/versions/*.pyc
 
 # Dash
 frontend/__pycache__/
+
+# SQLite databases
+*.db
+*.db-shm
+*.db-wal

@@ -1,17 +1,15 @@
 # backend/app/pf_client.py
 from __future__ import annotations
 
-import os
 import time
+import requests
+
 from typing import Any, cast
 from collections.abc import Iterator
 
-import requests
-
+from backend.app.config import settings
 
 BASE_URL = "https://api.petfinder.com/v2"
-ENV_CLIENT_ID = "PF_CLIENT_ID"
-ENV_CLIENT_SECRET = "PF_CLIENT_SECRET"
 
 
 class PetfinderAuthError(RuntimeError):
@@ -39,11 +37,11 @@ class PetfinderClient:
         client_secret: str | None = None,
         timeout: float = 30.0,
     ) -> None:
-        self.client_id = client_id or os.getenv(ENV_CLIENT_ID)
-        self.client_secret = client_secret or os.getenv(ENV_CLIENT_SECRET)
+        self.client_id = client_id or settings.pf_client_id
+        self.client_secret = client_secret or settings.pf_client_secret
         if not self.client_id or not self.client_secret:
             raise PetfinderAuthError(
-                f"Missing credentials: set {ENV_CLIENT_ID} and {ENV_CLIENT_SECRET}"
+                "Missing credentials: set PF_CLIENT_ID and PF_CLIENT_SECRET in .env"
             )
 
         self._session = requests.Session()
